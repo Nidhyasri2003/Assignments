@@ -151,3 +151,171 @@ FROM Customers
 WHERE address NOT LIKE '%' + 'chennai' + '%';
 
 
+--task 3
+-- 1. Find the average account balance for all customers
+SELECT AVG(balance) AS average_balance
+FROM Accounts;
+
+-- 2. Retrieve the top 10 highest account balances
+SELECT TOP 10 account_id, customer_id, balance
+FROM Accounts
+ORDER BY balance DESC;
+
+-- 3. Calculate Total Deposits for All Customers on a specific date
+SELECT SUM(amount) AS total_deposits
+FROM Transactions
+WHERE transaction_type = 'deposit'
+  AND CAST(transaction_date AS DATE) = '2025-04-01';
+
+-- 4. Find the Oldest and Newest Customers Oldest customer
+SELECT TOP 1 * 
+FROM Customers 
+ORDER BY DOB;
+-- Newest customer
+SELECT TOP 1 * 
+FROM Customers 
+ORDER BY DOB DESC;
+
+-- 5. Retrieve transaction details along with the account type
+SELECT t.transaction_id, t.transaction_type, t.amount, t.transaction_date, a.account_type
+FROM Transactions t
+JOIN Accounts a ON t.account_id = a.account_id;
+
+-- 6. Get a list of customers along with their account details
+SELECT c.customer_id, c.first_name, c.last_name, a.account_id, a.account_type, a.balance
+FROM Customers c
+JOIN Accounts a ON c.customer_id = a.customer_id;
+
+-- 7. Retrieve transaction details along with customer information for a specific account
+SELECT t.*, c.first_name, c.last_name, c.email
+FROM Transactions t
+JOIN Accounts a ON t.account_id = a.account_id
+JOIN Customers c ON a.customer_id = c.customer_id
+WHERE t.account_id = 1;  
+
+-- 8. Identify customers who have more than one account
+SELECT customer_id, COUNT(*) AS account_count
+FROM Accounts
+GROUP BY customer_id
+HAVING COUNT(*) > 1;
+
+-- 9. Calculate the difference in transaction amounts between deposits and withdrawals
+SELECT
+    SUM(CASE WHEN transaction_type = 'deposit' THEN amount ELSE 0 END) -
+    SUM(CASE WHEN transaction_type = 'withdrawal' THEN amount ELSE 0 END) AS balance_difference
+FROM Transactions;
+
+--10
+SELECT account_id,
+       AVG(balance) AS avg_daily_balance
+FROM (
+    SELECT account_id, CAST(transaction_date AS DATE) AS day,
+           SUM(amount) OVER (PARTITION BY account_id, CAST(transaction_date AS DATE)) AS balance
+    FROM Transactions
+    WHERE transaction_date BETWEEN '2025-03-01' AND '2025-03-31'
+) AS DailyBalance
+GROUP BY account_id;
+
+
+-- 11. Calculate the total balance for each account type
+SELECT account_type, SUM(balance) AS total_balance
+FROM Accounts
+GROUP BY account_type;
+
+-- 12. Identify accounts with the highest number of transactions (order by descending)
+SELECT account_id, COUNT(*) AS transaction_count
+FROM Transactions
+GROUP BY account_id
+ORDER BY transaction_count DESC;
+
+-- 13. List customers with high aggregate account balances, along with their account types
+SELECT c.customer_id, c.first_name, c.last_name, a.account_type, SUM(a.balance) AS total_balance
+FROM Customers c
+JOIN Accounts a ON c.customer_id = a.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name, a.account_type
+HAVING SUM(a.balance) > 1000;
+
+-- 14. Identify and list duplicate transactions based on transaction amount, date, and account
+SELECT account_id, amount, transaction_date, COUNT(*) AS duplicate_count
+FROM Transactions
+GROUP BY account_id, amount, transaction_date
+HAVING COUNT(*) > 0;
+
+--task 4
+-- 1. Retrieve the customer(s) with the highest account balance
+SELECT c.*
+FROM Customers c
+JOIN Accounts a ON c.customer_id = a.customer_id
+WHERE a.balance = (SELECT MAX(balance) FROM Accounts);
+
+-- 2. Calculate the average account balance for customers who have more than one account
+SELECT AVG(balance) AS avg_balance
+FROM Accounts
+WHERE customer_id IN (
+    SELECT customer_id
+    FROM Accounts
+    GROUP BY customer_id
+    HAVING COUNT(account_id) > 1
+);
+
+-- 3. Retrieve accounts with transactions whose amounts exceed the average transaction amount
+SELECT DISTINCT a.account_id, a.account_type, t.amount
+FROM Accounts a
+JOIN Transactions t ON a.account_id = t.account_id
+WHERE t.amount > (SELECT AVG(amount) FROM Transactions);
+
+-- 4. Identify customers who have no recorded transactions
+SELECT * 
+FROM Customers c
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Accounts a
+    JOIN Transactions t ON a.account_id = t.account_id
+    WHERE a.customer_id = c.customer_id
+);
+
+-- 5. Calculate the total balance of accounts with no recorded transactions
+SELECT SUM(balance) AS total_balance_without_transactions
+FROM Accounts a
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Transactions t
+    WHERE t.account_id = a.account_id
+);
+
+-- 6. Retrieve transactions for accounts with the lowest balance
+SELECT *
+FROM Transactions
+WHERE account_id IN (
+    SELECT account_id
+    FROM Accounts
+    WHERE balance = (SELECT MIN(balance) FROM Accounts)
+);
+
+-- 7. Identify customers who have accounts of multiple types
+SELECT customer_id
+FROM Accounts
+GROUP BY customer_id
+HAVING COUNT(DISTINCT account_type) > 1;
+
+-- 8. Calculate the percentage of each account type out of the total number of accounts
+SELECT account_type,
+       COUNT(*) * 100.0 / (SELECT COUNT(*) FROM Accounts) AS percentage_of_total
+FROM Accounts
+GROUP BY account_type;
+
+
+-- 9. Retrieve all transactions for a customer with a given customer_id
+SELECT t.*
+FROM Transactions t
+WHERE t.account_id IN (
+    SELECT account_id
+    FROM Accounts
+    WHERE customer_id = 101  -- Replace with desired customer_id
+);
+
+-- 10. Calculate the total balance for each account type, including a subquery within the SELECT clause
+SELECT account_type,
+       (SELECT SUM(balance) FROM Accounts a2 WHERE a2.account_type = a1.account_type) AS total_balance
+FROM Accounts a1
+GROUP BY account_type;
