@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Data.SqlClient;
+using System.IO;
+
+namespace CourierManagementSystem.Util
+{
+    public class DBPropertyUtil
+    {
+        public static SqlConnection GetConnection()
+        {
+            string connStr = DBPropertyUtil.GetConnectionString();
+            if (string.IsNullOrEmpty(connStr))
+                throw new InvalidOperationException("Connection string is invalid or empty.");
+
+            return new SqlConnection(connStr);
+        }
+
+        private static string GetConnectionString()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
