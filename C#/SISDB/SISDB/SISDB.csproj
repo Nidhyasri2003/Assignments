@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{57507DE6-C0D1-40A1-9FB7-E12555FFC158}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SISDB</RootNamespace>
+    <AssemblyName>SISDB</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\Documents\SISDBmain.cs" />
+    <Compile Include="dao\CourseDAO.cs" />
+    <Compile Include="dao\EnrollmentDAO.cs" />
+    <Compile Include="dao\ICourseDAO.cs" />
+    <Compile Include="dao\IEnrollmentDAO.cs" />
+    <Compile Include="dao\IPaymentDAO.cs" />
+    <Compile Include="dao\IStudentDAO.cs" />
+    <Compile Include="dao\ITeacherDAO.cs" />
+    <Compile Include="dao\PaymentDAO.cs" />
+    <Compile Include="dao\StudentDAO.cs" />
+    <Compile Include="dao\TeacherDAO.cs" />
+    <Compile Include="entity\Course.cs" />
+    <Compile Include="entity\Enrollment.cs" />
+    <Compile Include="entity\Payment.cs" />
+    <Compile Include="entity\Student.cs" />
+    <Compile Include="entity\Teacher.cs" />
+    <Compile Include="Exception\CourseNotFoundException.cs" />
+    <Compile Include="Exception\DuplicateEnrollmentException.cs" />
+    <Compile Include="Exception\InsufficientFundsException.cs" />
+    <Compile Include="Exception\InvalidCourseDataException.cs" />
+    <Compile Include="Exception\InvalidEnrollmentDataException.cs" />
+    <Compile Include="Exception\InvalidStudentDataException.cs" />
+    <Compile Include="Exception\InvalidTeacherDataException.cs" />
+    <Compile Include="Exception\PaymentValidationException.cs" />
+    <Compile Include="Exception\StudentNotFoundException.cs" />
+    <Compile Include="Exception\TeacherNotFoundException.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="util\DBConnUtil.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
